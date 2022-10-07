@@ -14,6 +14,6 @@ import java.util.List;
  * @since 2022-08-31
  */
 public interface TbAuthMapper extends BaseMapper<TbAuth> {
-    public List<TbAuth> findAll();
-    public List<TbAuth> findByAdminUserId(int userId);
+    List<TbAuth> findAll();
+    List<TbAuth> findByAdminUserId(int userId);
 }

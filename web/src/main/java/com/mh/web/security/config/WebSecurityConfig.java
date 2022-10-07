@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,7 +14,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.FilterChainProxy;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.session.FindByIndexNameSessionRepository;
+import org.springframework.session.security.SpringSessionBackedSessionRegistry;
 
 /**
  * @Description SpringSecurity安全框架配置
@@ -26,6 +31,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     CustomUserDetailsService customUserDetailsService;
+
+//    @Bean
+//    public AuthenticationManager authenticationManager() throws Exception {
+//        return super.authenticationManager();
+//    }
+
+    //处理登录时转表单为json的过滤器，不使用
+//    @Bean
+//    public LoginFilter loginFilter() throws Exception {
+//        LoginFilter loginFilter = new LoginFilter();
+//        loginFilter.setFilterProcessesUrl("/doLogin");
+////        loginFilter.setUsernameParameter("username");
+////        loginFilter.setPasswordParameter("password");
+//        loginFilter.setAuthenticationManager(authenticationManager());
+//        loginFilter.setAuthenticationSuccessHandler(new MyAuthenticationSuccessHandler());
+//        loginFilter.setAuthenticationFailureHandler(new MyAuthenticationFailureHandler());
+//        return loginFilter;
+//    }
+
 
     @Autowired
     private MyFilterSecurityInterceptor myFilterSecurityInterceptor;
@@ -46,9 +70,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         /**
          * 基于数据库自定义
          */
-
         auth.userDetailsService(customUserDetailsService);
-
     }
     /**
      * 指定加密方式
@@ -59,6 +81,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+    public static void main(String[] args) {
+        String s = new BCryptPasswordEncoder().encode("123456");
+        System.out.println(s);
+
+
+
+
+    }
 
 
     @Override
@@ -72,11 +102,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
 //                .antMatchers("/admin/**").hasRole("admin")
 //                .antMatchers("/user/**").hasRole("user")
+                .antMatchers("/login.html").anonymous()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
                 .loginPage("/login.html") //跳转登录页面
-                .loginProcessingUrl("/doLogin")//带数据访问登录接口 默认判断账户密码正确跳转successForwardUrl（post请求）
+//                .loginProcessingUrl("/admin/acl/index/login")//带数据访问登录接口 默认判断账户密码正确跳转successForwardUrl（post请求）
 //                .usernameParameter("username") //默认就是username,可通过配置改
 //                .passwordParameter("password") //默认password
 //                .defaultSuccessUrl("/index") //跳转登录前想到的路径，可配置和successForwardUrl一样只跳指定路径
@@ -93,15 +124,31 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .clearAuthentication(true) //清除认证信息和使 HttpSession 失效,不配默认就是ture
 //                .invalidateHttpSession(true)
                 .and()
-                .csrf().disable();
-        http.addFilterBefore(myFilterSecurityInterceptor, FilterSecurityInterceptor.class);
+                .csrf().disable()
+                .sessionManagement()
+                .maximumSessions(1)//只能登一个
+//                .maxSessionsPreventsLogin(true)  //登录之后其他新的登录禁止，不配则是踢掉原来的登录
+                .sessionRegistry(sessionRegistry());
+        //把自定义认证过滤器加到拦截器链中
+//        http.addFilterAt(loginFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(myFilterSecurityInterceptor, FilterSecurityInterceptor.class); // 自定义过滤器实现读权限表判断访问权限
+        http.addFilterBefore(new JwtLoginFilter("/admin/acl/index/login",authenticationManager()),UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JwtFilter(),UsernamePasswordAuthenticationFilter.class);
+
     }
 
+    @Autowired
+    FindByIndexNameSessionRepository sessionRepository;
     @Bean
-    RoleHierarchy roleHierarchy() {
-        RoleHierarchyImpl hierarchy = new RoleHierarchyImpl();
-        hierarchy.setHierarchy("ROLE_admin > ROLE_user"); //角色继承
-        return hierarchy;
+    SpringSessionBackedSessionRegistry sessionRegistry() {
+        return new SpringSessionBackedSessionRegistry(sessionRepository);
     }
+
+//    @Bean
+//    RoleHierarchy roleHierarchy() {
+//        RoleHierarchyImpl hierarchy = new RoleHierarchyImpl();
+//        hierarchy.setHierarchy("ROLE_admin > ROLE_user"); //角色继承
+//        return hierarchy;
+//    }
 
 }

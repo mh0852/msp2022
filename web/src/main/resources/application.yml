@@ -18,11 +18,26 @@ spring:
     testOnBorrow: false
     testOnReturn: false
     poolPreparedStatements: false
+  #redis配置信息
+  redis:
+    database: 0
+    host: 47.92.55.53
+    password: redis@2021
+    port: 6379
+    timeout: 5000
+    pool:
+      max-active: 8
+      max-wait: -1
+      max-idle: 8
+      min-idle: 0
 logging:
   level:
     com.xkcoding: debug
     com.xkcoding.orm.mybatis.plus.mapper: trace
     org.springframework.security: DEBUG
+
+server:
+  port: 8090
 
 mybatis-plus:
 #  mapper-locations: classpath*:com/mh/dao/mapper/*.xml
@@ -51,3 +66,5 @@ mybatis-plus:
 #  configuration:
 #    map-underscore-to-camel-case: true
 #    cache-enabled: true
+
+

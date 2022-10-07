@@ -2,4 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mh.web.security.mapper.TbRoleMapper">
 
+    <select id="findRolesByUserName" parameterType="String" resultType="com.mh.web.security.model.TbRole">
+        select b.*
+        from tb_user a
+        left join tb_user_role tur on a.user_id = tur.user_id
+        left join tb_role b on tur.role_id = b.role_id
+        where a.username = #{username}
+    </select>
+
 </mapper>

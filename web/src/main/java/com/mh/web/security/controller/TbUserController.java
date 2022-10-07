@@ -1,19 +1,17 @@
 package com.mh.web.security.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.mh.web.security.model.TbUser;
 import com.mh.web.security.service.ITbUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Date;
+
 
 /**
  * <p>
@@ -60,8 +58,10 @@ public class TbUserController {
 
     @PostMapping("/index")
     public String index() {
-        System.out.println("index");
-        return "index";
+        TbUser user = iTbUserService.getById(1);
+        String jsonStr = JSON.toJSONString(user);
+        System.out.println("jsonStr");
+        return jsonStr;
     }
 
     @GetMapping("/admin/hello")
@@ -73,6 +73,7 @@ public class TbUserController {
     @GetMapping("/user/hello")
     public String userhello() {
         System.out.println("userhello");
+
         return "userhello";
     }
 
@@ -88,4 +89,7 @@ public class TbUserController {
         System.out.println("test2");
         return "test2";
     }
+
+
+
 }

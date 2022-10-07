@@ -9,9 +9,11 @@ import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.kotlin.KtQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.kotlin.KtUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mh.web.security.mapper.TbAuthMapper;
 import com.mh.web.security.mapper.TbRoleMapper;
 import com.mh.web.security.model.TbRole;
 import com.mh.web.security.service.ITbRoleService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
@@ -31,4 +33,11 @@ import java.util.function.Function;
 @Service
 public class TbRoleServiceImpl extends ServiceImpl<TbRoleMapper, TbRole> implements ITbRoleService {
 
+    @Autowired
+    private TbRoleMapper roleMapper;
+
+    @Override
+    public List<TbRole> findRolesByUserName(String username) {
+        return roleMapper.findRolesByUserName(username);
+    }
 }
