@@ -50,7 +50,7 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
         String jwt = Jwts.builder()
                 .claim("authorities",sb)
                 .setSubject(authResult.getName())
-                .setExpiration(new Date(System.currentTimeMillis()+60*60*100))
+                .setExpiration(new Date(System.currentTimeMillis()+60*60*1000*24*5))
                 .signWith(SignatureAlgorithm.HS512,"menghao")
                 .compact();
 

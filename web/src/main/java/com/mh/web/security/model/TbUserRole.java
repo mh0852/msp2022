@@ -1,6 +1,9 @@
 package com.mh.web.security.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.github.jeffreyning.mybatisplus.anno.MppMultiId;
+
 import java.io.Serializable;
 
 /**
@@ -16,8 +19,12 @@ public class TbUserRole implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @MppMultiId // 复合主键
+    @TableField(value = "user_id")
     private Long userId;
 
+    @MppMultiId
+    @TableField(value = "role_id")
     private Long roleId;
 
     public Long getUserId() {

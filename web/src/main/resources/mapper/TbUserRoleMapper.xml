@@ -2,4 +2,25 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mh.web.security.mapper.TbUserRoleMapper">
 
+    <select id="getAllUsersWithRole" parameterType="String" resultType="com.mh.web.security.vo.userItem">
+                select a.user_id    as id,
+                       a.username   as username,
+                       a.password   as password,
+                       a.createtime as gmtCreate,
+                       a.updatetime as gmtModified,
+                       a.yl         as nickName,
+                       ''           as deleted,
+                       ''           as salt,
+                       ''           as token,
+                       c.cname      as roleName
+                from tb_user a
+                left join tb_user_role b on a.user_id = b.user_id
+                left join tb_role c on b.role_id = c.role_id
+                where 1=1
+                <if test="username!=null and username.trim()!=''">
+                    and a.username like #{username}
+                </if>
+                group by a.user_id
+    </select>
+
 </mapper>

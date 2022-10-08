@@ -9,9 +9,13 @@ import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.kotlin.KtQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.kotlin.KtUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.jeffreyning.mybatisplus.service.MppServiceImpl;
 import com.mh.web.security.mapper.TbUserRoleMapper;
 import com.mh.web.security.model.TbUserRole;
 import com.mh.web.security.service.ITbUserRoleService;
+import com.mh.web.security.vo.userItem;
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
@@ -29,6 +33,13 @@ import java.util.function.Function;
  * @since 2022-08-31
  */
 @Service
-public class TbUserRoleServiceImpl extends ServiceImpl<TbUserRoleMapper, TbUserRole> implements ITbUserRoleService {
+public class TbUserRoleServiceImpl extends MppServiceImpl<TbUserRoleMapper, TbUserRole> implements ITbUserRoleService {
 
+    @Autowired
+    private TbUserRoleMapper tbUserRoleMapper;
+
+    @Override
+    public List<userItem> getAllUsersWithRole(String username) {
+        return tbUserRoleMapper.getAllUsersWithRole(username);
+    }
 }

@@ -68,3 +68,6 @@ mybatis-plus:
 #    cache-enabled: true
 
 
+# 复合主键使用（配置此项可保证控制台不显示error提示，不影响结果）
+mpp:
+  entityBasePath: com.mh.web.security.model

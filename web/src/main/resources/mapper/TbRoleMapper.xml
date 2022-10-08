@@ -10,4 +10,11 @@
         where a.username = #{username}
     </select>
 
+    <select id="findRolesByUserId" parameterType="Int" resultType="com.mh.web.security.model.TbRole">
+        select b.*
+        from tb_user_role a
+        left join tb_role b on a.role_id = b.role_id
+        where a.user_id = #{id}
+    </select>
+
 </mapper>

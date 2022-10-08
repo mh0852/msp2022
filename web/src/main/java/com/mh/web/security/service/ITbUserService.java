@@ -13,4 +13,6 @@ import com.mh.web.security.model.TbUser;
  */
 public interface ITbUserService extends IService<TbUser> {
 
+
+
 }

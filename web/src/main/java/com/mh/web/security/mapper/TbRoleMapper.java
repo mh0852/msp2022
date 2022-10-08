@@ -17,4 +17,6 @@ public interface TbRoleMapper extends BaseMapper<TbRole> {
 
     List<TbRole> findRolesByUserName(String username);
 
+    List<TbRole> findRolesByUserId(Integer id);
+
 }

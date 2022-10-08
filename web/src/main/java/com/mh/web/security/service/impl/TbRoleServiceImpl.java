@@ -40,4 +40,9 @@ public class TbRoleServiceImpl extends ServiceImpl<TbRoleMapper, TbRole> impleme
     public List<TbRole> findRolesByUserName(String username) {
         return roleMapper.findRolesByUserName(username);
     }
+
+    @Override
+    public List<TbRole> findRolesByUserId(Integer id) {
+        return roleMapper.findRolesByUserId(id);
+    }
 }

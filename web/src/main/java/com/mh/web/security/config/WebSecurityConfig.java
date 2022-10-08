@@ -20,6 +20,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.session.FindByIndexNameSessionRepository;
 import org.springframework.session.security.SpringSessionBackedSessionRegistry;
 
+import java.util.Date;
+
 /**
  * @Description SpringSecurity安全框架配置
  */
@@ -84,7 +86,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public static void main(String[] args) {
         String s = new BCryptPasswordEncoder().encode("123456");
         System.out.println(s);
-
+        System.out.println(new Date(System.currentTimeMillis()) );
+        System.out.println(new Date(System.currentTimeMillis()+60*60*1000*24));
 
 
 
