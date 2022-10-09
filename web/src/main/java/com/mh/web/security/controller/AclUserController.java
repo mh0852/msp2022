@@ -7,7 +7,6 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.mh.web.security.model.TbRole;
 import com.mh.web.security.model.TbUser;
-import com.mh.web.security.model.TbUserRole;
 import com.mh.web.security.service.ITbRoleService;
 import com.mh.web.security.service.ITbUserRoleService;
 import com.mh.web.security.service.ITbUserService;
@@ -16,18 +15,16 @@ import com.mh.web.security.utils.ResponseResult;
 import com.mh.web.security.vo.roleItem;
 import com.mh.web.security.vo.userItem;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController
-public class MainController {
+public class AclUserController {
 
     @Autowired
     private ITbRoleService tbRoleService;
@@ -89,7 +86,6 @@ public class MainController {
             @PathVariable("pageNum") Integer pageNum,
             @PathVariable("pageSize") Integer pageSize) throws JsonProcessingException {
         PageHelper.startPage(pageNum,pageSize);
-        System.out.println("helloabc");
 //        QueryWrapper<TbUser> queryWrapper = new QueryWrapper<>();
 //        List<TbUser> tbUsers = tbUserService.getBaseMapper().selectList(queryWrapper);
         List<userItem> userItems = tbUserRoleService.getAllUsersWithRole(username);
@@ -191,23 +187,17 @@ public class MainController {
 
     // 修改用户角色（获取用户角色及系统所有角色列表）
     @PostMapping("/admin/acl/user/doAssign")
-    private String updateUserRoles(@RequestParam Map<String,String> req) throws JsonProcessingException {
-        String userId = req.get("userId");
-        String roleIds = req.get("roleId");
-        String[] s = roleIds.split(",");
-        List<TbUserRole> tbUserRoles = new ArrayList<>();
-        for(int i=0;i<s.length;i++){
-            TbUserRole tbUserRole = new TbUserRole();
-            tbUserRole.setUserId(Long.valueOf(userId));
-            tbUserRole.setRoleId(Long.valueOf(s[i]));
-            tbUserRoles.add(tbUserRole);
-        }
-
-        tbUserRoleService.saveOrUpdateBatchByMultiId(tbUserRoles);
-
-
+    public String updateUserRoles(@RequestParam Map<String,String> req) throws JsonProcessingException {
+        tbUserRoleService.updateUserRoles(req);
         Map<String, Object> dataMap = new HashMap<>();
         return new ObjectMapper().writeValueAsString(new ResponseResult(20000,"成功",dataMap,true));
+    }
+
+    public static void main(String[] args) {
+        String[] r = {"aa","bb","cc"};
+        List<String> list = Arrays.asList(r);
+        String[] b = {"aa","dd"};
+        System.out.println((list.contains(b[0])));
     }
 
 }

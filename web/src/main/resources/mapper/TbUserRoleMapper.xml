@@ -12,7 +12,7 @@
                        ''           as deleted,
                        ''           as salt,
                        ''           as token,
-                       c.cname      as roleName
+                       group_concat(c.ename)      as roleName
                 from tb_user a
                 left join tb_user_role b on a.user_id = b.user_id
                 left join tb_role c on b.role_id = c.role_id
@@ -22,5 +22,15 @@
                 </if>
                 group by a.user_id
     </select>
+
+    <select id="selectByUserId" parameterType="Int" resultType="String">
+        select group_concat(a.role_id)
+        from tb_user_role a
+        where 1=1
+        <if test="userId!=null">
+            and a.user_id = #{userId}
+        </if>
+    </select>
+
 
 </mapper>

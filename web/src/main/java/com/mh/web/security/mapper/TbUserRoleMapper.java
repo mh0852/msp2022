@@ -17,4 +17,5 @@ import java.util.List;
  */
 public interface TbUserRoleMapper extends MppBaseMapper<TbUserRole> {
     List<userItem> getAllUsersWithRole(String username);
+    String selectByUserId(Integer userId);
 }

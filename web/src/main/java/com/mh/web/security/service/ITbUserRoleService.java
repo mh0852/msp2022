@@ -6,6 +6,7 @@ import com.mh.web.security.model.TbUserRole;
 import com.mh.web.security.vo.userItem;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -18,5 +19,9 @@ import java.util.List;
 public interface ITbUserRoleService extends IMppService<TbUserRole> {
 
     List<userItem> getAllUsersWithRole(String username);
+
+    void updateUserRoles(Map<String,String> tbUserRoles);
+
+    String selectByUserId(Integer userId);
 
 }

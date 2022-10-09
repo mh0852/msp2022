@@ -12,13 +12,13 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.FilterChainProxy;
+import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.session.FindByIndexNameSessionRepository;
-import org.springframework.session.security.SpringSessionBackedSessionRegistry;
 
 import java.util.Date;
 
@@ -129,9 +129,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf().disable()
                 .sessionManagement()
-                .maximumSessions(1)//只能登一个
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) //前后端分离的时候配置成STATELESS，非前后端分离的需要配置成ALWAYS
+//                .maximumSessions(1)//只能登一个
 //                .maxSessionsPreventsLogin(true)  //登录之后其他新的登录禁止，不配则是踢掉原来的登录
-                .sessionRegistry(sessionRegistry());
+//                .sessionRegistry(sessionRegistry())
+        ;
         //把自定义认证过滤器加到拦截器链中
 //        http.addFilterAt(loginFilter(), UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(myFilterSecurityInterceptor, FilterSecurityInterceptor.class); // 自定义过滤器实现读权限表判断访问权限
@@ -139,13 +141,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.addFilterBefore(new JwtFilter(),UsernamePasswordAuthenticationFilter.class);
 
     }
-
-    @Autowired
-    FindByIndexNameSessionRepository sessionRepository;
-    @Bean
-    SpringSessionBackedSessionRegistry sessionRegistry() {
-        return new SpringSessionBackedSessionRegistry(sessionRepository);
-    }
+//    ExceptionTranslationFilter
+//    SessionManagementFilter
+//    @Autowired
+//    FindByIndexNameSessionRepository sessionRepository;
+//    @Bean
+//    SpringSessionBackedSessionRegistry sessionRegistry() {
+//        return new SpringSessionBackedSessionRegistry(sessionRepository);
+//    }
 
 //    @Bean
 //    RoleHierarchy roleHierarchy() {
