@@ -2,4 +2,29 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mh.web.security.mapper.TbRoleAuthMapper">
 
+
+    <select id="getAuthsByRoleName" parameterType="String" resultType="com.mh.web.security.model.TbAuth">
+        select c.*
+        from tb_role a
+        left join tb_role_auth b on a.id = b.role_id
+        left join tb_auth c on c.id = b.auth_id
+        where a.role_name = #{roleName}
+    </select>
+
+    <select id="getAuthsByRoleId" parameterType="Long" resultType="com.mh.web.security.model.TbAuth">
+        select b.*
+        from tb_role_auth a
+        left join tb_auth b on  a.auth_id = b.id
+        where a.role_id = #{roleId}
+    </select>
+
+    <select id="selectAuthsByRoleId" parameterType="Int" resultType="String">
+        select group_concat(a.auth_id)
+        from tb_role_auth a
+        where 1=1
+        <if test="roleId!=null">
+            and a.role_id = #{roleId}
+        </if>
+    </select>
+
 </mapper>

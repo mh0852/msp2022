@@ -12,6 +12,7 @@ import com.mh.web.security.service.ITbUserRoleService;
 import com.mh.web.security.service.ITbUserService;
 import com.mh.web.security.utils.EncPassword;
 import com.mh.web.security.utils.ResponseResult;
+import com.mh.web.security.utils.TimeGet;
 import com.mh.web.security.vo.roleItem;
 import com.mh.web.security.vo.userItem;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +58,7 @@ public class AclUserController {
         String[] ros = new String[roles.size()];
         for(int i = 0;i< roles.size();i++){
             TbRole role = roles.get(i);
-            ros[i] = role.getEname();
+            ros[i] = role.getRoleName();
         }
 
         Map<String, Object> dataMap = new HashMap<>();
@@ -86,8 +87,7 @@ public class AclUserController {
             @PathVariable("pageNum") Integer pageNum,
             @PathVariable("pageSize") Integer pageSize) throws JsonProcessingException {
         PageHelper.startPage(pageNum,pageSize);
-//        QueryWrapper<TbUser> queryWrapper = new QueryWrapper<>();
-//        List<TbUser> tbUsers = tbUserService.getBaseMapper().selectList(queryWrapper);
+        username = "%" + username + "%";
         List<userItem> userItems = tbUserRoleService.getAllUsersWithRole(username);
 
         PageInfo<userItem> pageInfo = new PageInfo(userItems);
@@ -109,8 +109,10 @@ public class AclUserController {
 
         TbUser user = new TbUser();
         user.setUsername(username);
-        user.setYl(nickName);
+        user.setNickName(nickName);
         user.setPassword(EncPassword.passwordEncoder().encode(password));
+        user.setGmtCreate(TimeGet.getCurrentTime());
+        user.setGmtModified(TimeGet.getCurrentTime());
 
         tbUserService.getBaseMapper().insert(user);
 
@@ -121,7 +123,14 @@ public class AclUserController {
     // 批量删除用户
     @DeleteMapping("/admin/acl/user/batchRemove")
     private String delBatchUser(@RequestBody List<String> body) throws JsonProcessingException {
-        tbUserService.getBaseMapper().deleteBatchIds(body);
+        List<TbUser> tbUsers = new ArrayList<>();
+        for(int i=0;i<body.size();i++){
+            TbUser user = new TbUser();
+            user.setId(Long.valueOf(body.get(i)));
+            tbUsers.add(user);
+        }
+        tbUserService.deleteUsersWithAuths(tbUsers);
+
         Map<String, Object> dataMap = new HashMap<>();
         return new ObjectMapper().writeValueAsString(new ResponseResult(20000,"成功",dataMap,true));
     }
@@ -129,7 +138,11 @@ public class AclUserController {
     // 删除单个用户
     @DeleteMapping("/admin/acl/user/remove/{id}")
     private String delUser(@PathVariable("id") String id) throws JsonProcessingException {
-        tbUserService.getBaseMapper().deleteById(id);
+        TbUser user = new TbUser();
+        user.setId(Long.valueOf(id));
+
+        tbUserService.deleteUsersWithAuths(Collections.singletonList(user));
+
         Map<String, Object> dataMap = new HashMap<>();
         return new ObjectMapper().writeValueAsString(new ResponseResult(20000,"成功",dataMap,true));
     }
@@ -139,16 +152,11 @@ public class AclUserController {
     private String updateUser(@RequestBody userItem userItem) throws JsonProcessingException {
         System.out.println(userItem.toString());
         TbUser user = new TbUser();
-        user.setUserId(Long.valueOf(userItem.getId()));
+        user.setId(Long.valueOf(userItem.getId()));
         user.setUsername(userItem.getUsername());
         user.setPassword(userItem.getPassword());
-
-        SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date = new Date(System.currentTimeMillis());
-        String localDateTime = formatter.format(date);
-
-        user.setUpdatetime(localDateTime);
-        user.setYl(userItem.getNickName());
+        user.setGmtModified(TimeGet.getCurrentTime());
+        user.setNickName(TimeGet.getCurrentTime());
 
         tbUserService.getBaseMapper().updateById(user);
 
@@ -166,14 +174,14 @@ public class AclUserController {
         List<roleItem> allRolesList = new ArrayList<>();
         for(int i=0;i<tbRoles.size();i++){
             roleItem ri = new roleItem();
-            ri.setId(String.valueOf(tbRoles.get(i).getRoleId()));
-            ri.setRoleName(tbRoles.get(i).getEname());
+            ri.setId(String.valueOf(tbRoles.get(i).getId()));
+            ri.setRoleName(tbRoles.get(i).getRoleName());
             assignRoles.add(ri);
         }
         for(int i=0;i<allTbRoles.size();i++){
             roleItem ri = new roleItem();
-            ri.setId(String.valueOf(allTbRoles.get(i).getRoleId()));
-            ri.setRoleName(allTbRoles.get(i).getEname());
+            ri.setId(String.valueOf(allTbRoles.get(i).getId()));
+            ri.setRoleName(allTbRoles.get(i).getRoleName());
             allRolesList.add(ri);
         }
 

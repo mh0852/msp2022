@@ -33,12 +33,12 @@ public class CustomUserDetailsService implements UserDetailsService {
         queryWrapper.eq("username",username);
         TbUser user = userService.getBaseMapper().selectOne(queryWrapper);
         if (user != null) {
-            List<TbAuth> auths = authService.findByAdminUserId(user.getUserId().intValue());
+            List<TbAuth> auths = authService.findAuthsByUserId(user.getId().intValue());
             List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
             for (TbAuth auth : auths) {
-                if (auth != null && auth.getName()!=null) {
+                if (auth != null && auth.getCode()!=null) {
 
-                    GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(auth.getName());
+                    GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(auth.getCode());
                     //1：此处将权限信息添加到 GrantedAuthority 对象中，在后面进行全权限验证时会使用GrantedAuthority 对象。
                     grantedAuthorities.add(grantedAuthority);
                 }

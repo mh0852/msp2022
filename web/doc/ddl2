@@ -1,0 +1,60 @@
+use msp2022;
+--用户--
+drop table if exists tb_user;
+create table if not exists tb_user(
+    id bigint primary key not null auto_increment,
+    gmtCreate varchar(19),
+    gmtModified varchar(19),
+    deleted varchar(10),
+    username varchar(30),
+    password varchar(300),
+    nickName varchar(50),
+    salt varchar(100),
+    token  varchar(500)
+);
+
+--角色--
+drop table if exists tb_role;
+create table if not exists tb_role
+(
+    id bigint primary key not null auto_increment,
+    gmtCreate varchar(19),
+    gmtModified varchar(19),
+    deleted varchar(10),
+    roleName varchar(80),
+    remark varchar(80)
+);
+
+--权限--
+drop table if exists tb_auth;
+create table if not exists tb_auth(
+    id    bigint primary key not null auto_increment,
+    gmtCreate        varchar(19),
+    gmtModified        varchar(19),
+    deleted        varchar(10),
+    pid        int comment '权限上级主键',
+    name        varchar(20) comment '权限中文名',
+    code        varchar(20) comment '权限代码',
+    toCode        varchar(20),
+    type        varchar(2)  comment '路由或按钮',
+    status        varchar(20),
+    level        varchar(20) comment '权限层级',
+    isValid        varchar(2) comment '是否有效'
+);
+--用户-角色--
+drop table if exists tb_user_role;
+create table if not exists tb_user_role
+(
+user_id bigint,
+role_id bigint,
+primary key(user_id,role_id)
+);
+
+--角色--权限--
+drop table if exists tb_role_auth;
+create table if not exists tb_role_auth
+(
+role_id bigint,
+auth_id bigint,
+primary key(role_id,auth_id)
+);

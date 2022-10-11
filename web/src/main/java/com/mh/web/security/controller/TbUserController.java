@@ -50,8 +50,8 @@ public class TbUserController {
 
         user.setUsername("user");
         user.setPassword("user");
-        user.setCreatetime(localDateTime);
-        user.setUpdatetime(localDateTime);
+//        user.setCreatetime(localDateTime);
+//        user.setUpdatetime(localDateTime);
         iTbUserService.save(user);
         System.out.println(user.toString());
     }

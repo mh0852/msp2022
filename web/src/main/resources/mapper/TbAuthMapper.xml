@@ -5,13 +5,13 @@
         SELECT * from tb_auth ;
     </select>
 
-    <select id="findByAdminUserId" parameterType="int" resultType="com.mh.web.security.model.TbAuth">
+    <select id="findAuthsByUserId" parameterType="int" resultType="com.mh.web.security.model.TbAuth">
         select ta.*
         from tb_user a
-        left join tb_user_role tur on a.user_id = tur.user_id
-        left join tb_role b on tur.role_id = b.role_id
-        left join tb_role_auth tra on b.role_id = tra.role_id
-        left join tb_auth ta on tra.auth_id = ta.auth_id
-        where a.user_id = #{userId}
+        left join tb_user_role tur on a.id = tur.user_id
+        left join tb_role b on tur.role_id = b.id
+        left join tb_role_auth tra on b.id = tra.role_id
+        left join tb_auth ta on tra.auth_id = ta.id
+        where a.id = #{userId}
     </select>
 </mapper>

@@ -5,15 +5,15 @@
     <select id="findRolesByUserName" parameterType="String" resultType="com.mh.web.security.model.TbRole">
         select b.*
         from tb_user a
-        left join tb_user_role tur on a.user_id = tur.user_id
-        left join tb_role b on tur.role_id = b.role_id
+        left join tb_user_role tur on a.id = tur.user_id
+        left join tb_role b on tur.role_id = b.id
         where a.username = #{username}
     </select>
 
     <select id="findRolesByUserId" parameterType="Int" resultType="com.mh.web.security.model.TbRole">
         select b.*
         from tb_user_role a
-        left join tb_role b on a.role_id = b.role_id
+        left join tb_role b on a.role_id = b.id
         where a.user_id = #{id}
     </select>
 

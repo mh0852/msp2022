@@ -3,6 +3,10 @@ package com.mh.web.security.model;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.io.Serializable;
 
 /**
@@ -14,69 +18,24 @@ import java.io.Serializable;
  * @since 2022-08-31
  */
 @TableName("tb_role")
+@Setter
+@Getter
+@ToString
 public class TbRole implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "role_id", type = IdType.AUTO)
-    private Long roleId;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
-    private String ename;
+    private String gmtCreate;
 
-    private String cname;
+    private String gmtModified;
 
-    private String createtime;
+    private String deleted;
 
-    private String updatetime;
+    private String roleName;
 
-    public Long getRoleId() {
-        return roleId;
-    }
+    private String remark;
 
-    public void setRoleId(Long roleId) {
-        this.roleId = roleId;
-    }
-
-    public String getEname() {
-        return ename;
-    }
-
-    public void setEname(String ename) {
-        this.ename = ename;
-    }
-
-    public String getCname() {
-        return cname;
-    }
-
-    public void setCname(String cname) {
-        this.cname = cname;
-    }
-
-    public String getCreatetime() {
-        return createtime;
-    }
-
-    public void setCreatetime(String createtime) {
-        this.createtime = createtime;
-    }
-
-    public String getUpdatetime() {
-        return updatetime;
-    }
-
-    public void setUpdatetime(String updatetime) {
-        this.updatetime = updatetime;
-    }
-
-    @Override
-    public String toString() {
-        return "TbRole{" +
-        "roleId = " + roleId +
-        ", ename = " + ename +
-        ", cname = " + cname +
-        ", createtime = " + createtime +
-        ", updatetime = " + updatetime +
-        "}";
-    }
 }

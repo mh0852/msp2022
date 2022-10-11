@@ -1,15 +1,21 @@
 package com.mh.web.security.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.mh.web.security.model.TbAuth;
 import com.mh.web.security.model.TbRole;
 import com.mh.web.security.model.TbUser;
+import com.mh.web.security.service.ITbRoleAuthService;
 import com.mh.web.security.service.ITbRoleService;
 import com.mh.web.security.utils.EncPassword;
+import com.mh.web.security.utils.MenuTree;
 import com.mh.web.security.utils.ResponseResult;
+import com.mh.web.security.utils.TimeGet;
+import com.mh.web.security.vo.authTreeItem;
 import com.mh.web.security.vo.roleItem;
 import com.mh.web.security.vo.userItem;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +31,9 @@ public class AclRoleController {
     @Autowired
     private ITbRoleService tbRoleService;
 
+    @Autowired
+    private ITbRoleAuthService tbRoleAuthService;
+
     @GetMapping("/admin/acl/role/{pageNum}/{pageSize}")
     public String getRoles(@RequestParam(value = "roleName",required = false) String roleName,
                            @PathVariable("pageNum") Integer pageNum,
@@ -33,7 +42,7 @@ public class AclRoleController {
         QueryWrapper<TbRole> queryWrapper = new QueryWrapper<>();
         if(roleName.trim()!="") {
             TbRole role = new TbRole();
-            role.setEname(roleName);
+            role.setRoleName(roleName);
             queryWrapper.setEntity(role);
         }
         List<TbRole> tbRoles = tbRoleService.getBaseMapper().selectList(queryWrapper);
@@ -41,10 +50,10 @@ public class AclRoleController {
 
         for(int i=0;i<tbRoles.size();i++){
             roleItem rim = new roleItem();
-            rim.setId(String.valueOf(tbRoles.get(i).getRoleId()));
-            rim.setRoleName(tbRoles.get(i).getEname());
-            rim.setGmtCreate(tbRoles.get(i).getCreatetime());
-            rim.setGmtModified(tbRoles.get(i).getUpdatetime());
+            rim.setId(String.valueOf(tbRoles.get(i).getId()));
+            rim.setRoleName(tbRoles.get(i).getRoleName());
+            rim.setGmtCreate(tbRoles.get(i).getGmtCreate());
+            rim.setGmtModified(tbRoles.get(i).getGmtModified());
             roleItems.add(rim);
         }
 
@@ -62,19 +71,48 @@ public class AclRoleController {
     public String addRole(@RequestBody Map<String,String> req) throws JsonProcessingException {
         String roleName = req.get("roleName");
 
-        SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date = new Date(System.currentTimeMillis());
-        String localDateTime = formatter.format(date);
-
         TbRole role = new TbRole();
-        role.setEname(roleName);
-        role.setCreatetime(localDateTime);
-        role.setUpdatetime(localDateTime);
+        role.setRoleName(roleName);
+        role.setGmtCreate(TimeGet.getCurrentTime());
+        role.setGmtModified(TimeGet.getCurrentTime());
 
         tbRoleService.getBaseMapper().insert(role);
         FilterSecurityInterceptor f;
         Map<String, Object> dataMap = new HashMap<>();
         return new ObjectMapper().writeValueAsString(new ResponseResult(20000,"成功",dataMap,true));
     }
+
+
+    // 修改角色信息
+    @PutMapping("/admin/acl/role/update")
+    private String updateRole(@RequestBody Map<String,String> req) throws JsonProcessingException {
+
+        TbRole role = new TbRole();
+        role.setId(Long.valueOf(req.get("id")));
+        role.setRoleName(req.get("roleName"));
+        role.setGmtModified(TimeGet.getCurrentTime());
+        tbRoleService.getBaseMapper().updateById(role);
+
+        Map<String, Object> dataMap = new HashMap<>();
+        return new ObjectMapper().writeValueAsString(new ResponseResult(20000,"成功",dataMap,true));
+    }
+
+
+    // 批量删除角色
+    @DeleteMapping("/admin/acl/role/batchRemove")
+    private String delBatchRoles(@RequestBody List<String> body) throws JsonProcessingException {
+        tbRoleService.delBatchRoles(body);
+        Map<String, Object> dataMap = new HashMap<>();
+        return new ObjectMapper().writeValueAsString(new ResponseResult(20000,"成功",dataMap,true));
+    }
+
+    // 删除单个角色
+    @DeleteMapping("/admin/acl/role/remove/{id}")
+    private String delUser(@PathVariable("id") String id) throws JsonProcessingException {
+        tbRoleService.delBatchRoles(Collections.singletonList(id));
+        Map<String, Object> dataMap = new HashMap<>();
+        return new ObjectMapper().writeValueAsString(new ResponseResult(20000,"成功",dataMap,true));
+    }
+
 
 }

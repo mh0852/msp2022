@@ -29,7 +29,7 @@ public class TbAuthServiceImpl extends ServiceImpl<TbAuthMapper, TbAuth> impleme
     }
 
     @Override
-    public List<TbAuth> findByAdminUserId(int userId) {
-        return authMapper.findByAdminUserId(userId);
+    public List<TbAuth> findAuthsByUserId(int userId) {
+        return authMapper.findAuthsByUserId(userId);
     }
 }

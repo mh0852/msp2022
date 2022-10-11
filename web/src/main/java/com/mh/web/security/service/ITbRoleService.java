@@ -17,4 +17,5 @@ import java.util.List;
 public interface ITbRoleService extends IService<TbRole> {
     List<TbRole> findRolesByUserName(String username);
     List<TbRole> findRolesByUserId(Integer id);
+    void delBatchRoles(List<String> ids);
 }

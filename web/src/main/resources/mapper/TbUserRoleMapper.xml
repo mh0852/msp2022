@@ -3,24 +3,24 @@
 <mapper namespace="com.mh.web.security.mapper.TbUserRoleMapper">
 
     <select id="getAllUsersWithRole" parameterType="String" resultType="com.mh.web.security.vo.userItem">
-                select a.user_id    as id,
+                select a.id    as id,
                        a.username   as username,
                        a.password   as password,
-                       a.createtime as gmtCreate,
-                       a.updatetime as gmtModified,
-                       a.yl         as nickName,
-                       ''           as deleted,
-                       ''           as salt,
-                       ''           as token,
-                       group_concat(c.ename)      as roleName
+                       a.gmt_Create as gmtCreate,
+                       a.gmt_modified as gmtModified,
+                       a.nick_Name         as nickName,
+                       a.deleted          as deleted,
+                       a.salt           as salt,
+                       a.token           as token,
+                       group_concat(c.role_Name)      as roleName
                 from tb_user a
-                left join tb_user_role b on a.user_id = b.user_id
-                left join tb_role c on b.role_id = c.role_id
+                left join tb_user_role b on a.id = b.user_id
+                left join tb_role c on b.role_id = c.id
                 where 1=1
                 <if test="username!=null and username.trim()!=''">
                     and a.username like #{username}
                 </if>
-                group by a.user_id
+                group by a.id
     </select>
 
     <select id="selectByUserId" parameterType="Int" resultType="String">

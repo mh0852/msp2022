@@ -16,6 +16,6 @@ import java.util.List;
 public interface ITbAuthService extends IService<TbAuth> {
 
     List<TbAuth> findAll();
-    List<TbAuth> findByAdminUserId(int userId);
+    List<TbAuth> findAuthsByUserId(int userId);
 
 }
