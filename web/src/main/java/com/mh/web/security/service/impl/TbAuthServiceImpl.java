@@ -32,4 +32,9 @@ public class TbAuthServiceImpl extends ServiceImpl<TbAuthMapper, TbAuth> impleme
     public List<TbAuth> findAuthsByUserId(int userId) {
         return authMapper.findAuthsByUserId(userId);
     }
+
+    @Override
+    public List<TbAuth> findAuthsByUserName(String username) {
+        return authMapper.findAuthsByUserName(username);
+    }
 }

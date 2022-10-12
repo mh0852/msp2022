@@ -17,5 +17,6 @@ public interface ITbAuthService extends IService<TbAuth> {
 
     List<TbAuth> findAll();
     List<TbAuth> findAuthsByUserId(int userId);
+    List<TbAuth> findAuthsByUserName(String username);
 
 }

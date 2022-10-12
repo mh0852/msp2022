@@ -39,7 +39,7 @@ create table if not exists tb_auth(
     type        varchar(2)  comment '路由或按钮',
     status        varchar(20),
     level        varchar(20) comment '权限层级',
-    isValid        varchar(2) comment '是否有效'
+    url        varchar(50) comment '是否有效'
 );
 --用户-角色--
 drop table if exists tb_user_role;

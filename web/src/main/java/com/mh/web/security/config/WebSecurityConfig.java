@@ -53,8 +53,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //    }
 
 
-//    @Autowired
-//    private MyFilterSecurityInterceptor myFilterSecurityInterceptor;
+    @Autowired
+    private MyFilterSecurityInterceptor myFilterSecurityInterceptor;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -136,7 +136,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         ;
         //把自定义认证过滤器加到拦截器链中
 //        http.addFilterAt(loginFilter(), UsernamePasswordAuthenticationFilter.class);
-//        http.addFilterBefore(myFilterSecurityInterceptor, FilterSecurityInterceptor.class); // 自定义过滤器实现读权限表判断访问权限  (暂时先不用这个判断权限)
+        http.addFilterBefore(myFilterSecurityInterceptor, FilterSecurityInterceptor.class); // 自定义过滤器实现读权限表判断访问权限  (暂时先不用这个判断权限)
         http.addFilterBefore(new JwtLoginFilter("/admin/acl/index/login",authenticationManager()),UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(new JwtFilter(),UsernamePasswordAuthenticationFilter.class);
 

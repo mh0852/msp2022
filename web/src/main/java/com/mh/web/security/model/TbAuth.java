@@ -48,7 +48,7 @@ public class TbAuth implements Serializable {
 
     private String level;
 
-    private String isValid;
+    private String url;
 
     @Override
     public boolean equals(Object obj) {

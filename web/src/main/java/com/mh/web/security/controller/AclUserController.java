@@ -5,8 +5,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.mh.web.security.model.TbAuth;
 import com.mh.web.security.model.TbRole;
 import com.mh.web.security.model.TbUser;
+import com.mh.web.security.service.ITbAuthService;
 import com.mh.web.security.service.ITbRoleService;
 import com.mh.web.security.service.ITbUserRoleService;
 import com.mh.web.security.service.ITbUserService;
@@ -21,8 +23,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.function.Predicate;
 
 @RestController
 public class AclUserController {
@@ -35,6 +37,9 @@ public class AclUserController {
 
     @Autowired
     private ITbUserRoleService tbUserRoleService;
+
+    @Autowired
+    private ITbAuthService tbAuthService;
 
     // 获取用户信息
     @GetMapping("/admin/acl/index/info")
@@ -53,7 +58,6 @@ public class AclUserController {
             rts[i] = s.get(i);
         }
 
-
         List<TbRole> roles = tbRoleService.findRolesByUserName(username);
         String[] ros = new String[roles.size()];
         for(int i = 0;i< roles.size();i++){
@@ -61,11 +65,21 @@ public class AclUserController {
             ros[i] = role.getRoleName();
         }
 
+        List<TbAuth> auths = tbAuthService.findAuthsByUserName(username);
+
+        Predicate<TbAuth> predicate = (a) -> a.getType().equals("1");
+        auths.removeIf(predicate);
+
+        String[] buttons = new String[auths.size()];
+        for(int i=0;i<auths.size();i++){
+            buttons[i]=auths.get(i).getCode();
+        }
+
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put("routes",rts);
         dataMap.put("name",username);
         dataMap.put("avatar","https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif");
-        dataMap.put("buttons",null);
+        dataMap.put("buttons",buttons);
         dataMap.put("roles",ros);
 
         return new ObjectMapper().writeValueAsString(new ResponseResult(20000,"成功",dataMap,true));
