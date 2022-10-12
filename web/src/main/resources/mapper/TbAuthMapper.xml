@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mh.web.security.mapper.TbAuthMapper">
     <select id="findAll"  resultType="com.mh.web.security.model.TbAuth">
-        SELECT * from tb_auth order by level desc;
+        SELECT * from tb_auth order by level desc
     </select>
 
     <select id="findAuthsByUserId" parameterType="int" resultType="com.mh.web.security.model.TbAuth">
