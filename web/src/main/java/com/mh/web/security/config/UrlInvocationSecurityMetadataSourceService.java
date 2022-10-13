@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 @Service
-public class MyInvocationSecurityMetadataSourceService implements FilterInvocationSecurityMetadataSource {
+public class UrlInvocationSecurityMetadataSourceService implements FilterInvocationSecurityMetadataSource {
 
     @Autowired
     private TbAuthMapper authMapper;

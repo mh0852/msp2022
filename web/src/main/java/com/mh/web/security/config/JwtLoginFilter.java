@@ -1,5 +1,6 @@
 package com.mh.web.security.config;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mh.web.security.model.TbUser;
 import com.mh.web.security.utils.ResponseResult;
@@ -59,7 +60,7 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
         resp.setContentType("application/json;charset=utf-8");
         PrintWriter out = resp.getWriter();
 
-        out.write(new ObjectMapper().writeValueAsString(new ResponseResult(20000,"登录成功",map,true)));
+        out.write(JSONObject.toJSONString(new ResponseResult(20000,"登录成功",map,true)));
         out.flush();
         out.close();
 
@@ -68,10 +69,13 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse resp, AuthenticationException failed) throws IOException, ServletException {
         Map<String,String> map = new HashMap<>();
-        map.put("msg","登录失败");
+        String message = failed.getMessage();
+        if(failed.getMessage().equals("Bad credentials")){
+            message = "密码错误";
+        }
         resp.setContentType("application/json;charset=utf-8");
         PrintWriter out = resp.getWriter();
-        out.write(new ObjectMapper().writeValueAsString(map));
+        out.write(JSONObject.toJSONString(new ResponseResult(20001,message,map,false)));
         out.flush();
         out.close();
     }

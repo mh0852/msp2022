@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 @Service
-public class MyAccessDecisionManager implements AccessDecisionManager {
+public class UrlAccessDecisionManager implements AccessDecisionManager {
     // decide 方法是判定是否拥有权限的决策方法，
     //authentication 是释CustomUserService中循环添加到 GrantedAuthority 对象中的权限信息集合.
     //object 包含客户端发起的请求的requset信息，可转换为 HttpServletRequest request = ((FilterInvocation) object).getHttpRequest();

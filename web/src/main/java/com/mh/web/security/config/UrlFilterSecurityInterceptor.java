@@ -12,13 +12,13 @@ import javax.servlet.*;
 import java.io.IOException;
 
 @Service
-public class MyFilterSecurityInterceptor extends AbstractSecurityInterceptor implements Filter   {
+public class UrlFilterSecurityInterceptor extends AbstractSecurityInterceptor implements Filter   {
     @Autowired
     private FilterInvocationSecurityMetadataSource securityMetadataSource;
 
     @Autowired
-    public void setMyAccessDecisionManager(MyAccessDecisionManager myAccessDecisionManager) {
-        super.setAccessDecisionManager(myAccessDecisionManager);
+    public void setMyAccessDecisionManager(UrlAccessDecisionManager urlAccessDecisionManager) {
+        super.setAccessDecisionManager(urlAccessDecisionManager);
     }
 
 
@@ -37,8 +37,8 @@ public class MyFilterSecurityInterceptor extends AbstractSecurityInterceptor imp
 
     public void invoke(FilterInvocation fi) throws IOException, ServletException {
         //fi里面有一个被拦截的url
-        //里面调用MyInvocationSecurityMetadataSource的getAttributes(Object object)这个方法获取fi对应的所有权限
-        //再调用MyAccessDecisionManager的decide方法来校验用户的权限是否足够
+        //里面调用UrlInvocationSecurityMetadataSource的getAttributes(Object object)这个方法获取fi对应的所有权限
+        //再调用UrlAccessDecisionManager的decide方法来校验用户的权限是否足够
         InterceptorStatusToken token = super.beforeInvocation(fi);
         try {
         //执行下一个拦截器
