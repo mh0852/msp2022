@@ -1,8 +1,7 @@
 package com.mh.web.security.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.mh.web.security.model.TbAuth;
@@ -43,7 +42,7 @@ public class AclUserController {
 
     // 获取用户信息
     @GetMapping("/admin/acl/index/info")
-    public String getUserInfo() throws JsonProcessingException {
+    public String getUserInfo(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
@@ -82,15 +81,15 @@ public class AclUserController {
         dataMap.put("buttons",buttons);
         dataMap.put("roles",ros);
 
-        return new ObjectMapper().writeValueAsString(new ResponseResult(20000,"成功",dataMap,true));
+        return JSONObject.toJSONString(new ResponseResult(20000,"成功",dataMap,true));
     }
 
     // 注销
     @PostMapping("/admin/acl/index/logout")
-    public String logout() throws JsonProcessingException {
+    public String logout(){
         //
         Map<String, Object> dataMap = new HashMap<>();
-        return new ObjectMapper().writeValueAsString(new ResponseResult(20000,"成功",dataMap,true));
+        return JSONObject.toJSONString(new ResponseResult(20000,"成功",dataMap,true));
 
     }
 
@@ -99,7 +98,7 @@ public class AclUserController {
     public String getUsers(
             @RequestParam(value = "username",required = false) String username,
             @PathVariable("pageNum") Integer pageNum,
-            @PathVariable("pageSize") Integer pageSize) throws JsonProcessingException {
+            @PathVariable("pageSize") Integer pageSize){
         PageHelper.startPage(pageNum,pageSize);
         username = "%" + username + "%";
         List<userItem> userItems = tbUserRoleService.getAllUsersWithRole(username);
@@ -109,14 +108,13 @@ public class AclUserController {
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put("total",pageInfo.getTotal());
         dataMap.put("items",userItems);
-//        System.out.println("分页数据" + userItems.toString());
 
-        return new ObjectMapper().writeValueAsString(new ResponseResult(20000,"成功",dataMap,true));
+        return JSONObject.toJSONString(new ResponseResult(20000,"成功",dataMap,true));
     }
 
     // 添加用户
     @PostMapping("/admin/acl/user/save")
-    public String addUser(@RequestBody Map<String,String> req) throws JsonProcessingException {
+    public String addUser(@RequestBody Map<String,String> req){
         String username = req.get("username");
         String nickName = req.get("nickName");
         String password = req.get("password");
@@ -131,12 +129,12 @@ public class AclUserController {
         tbUserService.getBaseMapper().insert(user);
 
         Map<String, Object> dataMap = new HashMap<>();
-        return new ObjectMapper().writeValueAsString(new ResponseResult(20000,"成功",dataMap,true));
+        return JSONObject.toJSONString(new ResponseResult(20000,"成功",dataMap,true));
     }
 
     // 批量删除用户
     @DeleteMapping("/admin/acl/user/batchRemove")
-    private String delBatchUser(@RequestBody List<String> body) throws JsonProcessingException {
+    private String delBatchUser(@RequestBody List<String> body){
         List<TbUser> tbUsers = new ArrayList<>();
         for(int i=0;i<body.size();i++){
             TbUser user = new TbUser();
@@ -146,24 +144,24 @@ public class AclUserController {
         tbUserService.deleteUsersWithAuths(tbUsers);
 
         Map<String, Object> dataMap = new HashMap<>();
-        return new ObjectMapper().writeValueAsString(new ResponseResult(20000,"成功",dataMap,true));
+        return JSONObject.toJSONString(new ResponseResult(20000,"成功",dataMap,true));
     }
 
     // 删除单个用户
     @DeleteMapping("/admin/acl/user/remove/{id}")
-    private String delUser(@PathVariable("id") String id) throws JsonProcessingException {
+    private String delUser(@PathVariable("id") String id){
         TbUser user = new TbUser();
         user.setId(Long.valueOf(id));
 
         tbUserService.deleteUsersWithAuths(Collections.singletonList(user));
 
         Map<String, Object> dataMap = new HashMap<>();
-        return new ObjectMapper().writeValueAsString(new ResponseResult(20000,"成功",dataMap,true));
+        return JSONObject.toJSONString(new ResponseResult(20000,"成功",dataMap,true));
     }
 
     // 更新用户信息
     @PutMapping("/admin/acl/user/update")
-    private String updateUser(@RequestBody userItem userItem) throws JsonProcessingException {
+    private String updateUser(@RequestBody userItem userItem){
         System.out.println(userItem.toString());
         TbUser user = new TbUser();
         user.setId(Long.valueOf(userItem.getId()));
@@ -175,12 +173,12 @@ public class AclUserController {
         tbUserService.getBaseMapper().updateById(user);
 
         Map<String, Object> dataMap = new HashMap<>();
-        return new ObjectMapper().writeValueAsString(new ResponseResult(20000,"成功",dataMap,true));
+        return JSONObject.toJSONString(new ResponseResult(20000,"成功",dataMap,true));
     }
 
     // 修改用户角色（获取用户角色及系统所有角色列表）
     @GetMapping("/admin/acl/user/toAssign/{id}")
-    private String allRolesList(@PathVariable("id") String id) throws JsonProcessingException {
+    private String allRolesList(@PathVariable("id") String id){
         List<TbRole> tbRoles = tbRoleService.findRolesByUserId(Integer.valueOf(id));
         List<TbRole> allTbRoles = tbRoleService.getBaseMapper().selectList(new QueryWrapper<>());
 
@@ -203,23 +201,16 @@ public class AclUserController {
         dataMap.put("assignRoles",assignRoles);
         dataMap.put("allRolesList",allRolesList);
 
-        return new ObjectMapper().writeValueAsString(new ResponseResult(20000,"成功",dataMap,true));
+        return JSONObject.toJSONString(new ResponseResult(20000,"成功",dataMap,true));
     }
 
 
     // 修改用户角色（获取用户角色及系统所有角色列表）
     @PostMapping("/admin/acl/user/doAssign")
-    public String updateUserRoles(@RequestParam Map<String,String> req) throws JsonProcessingException {
+    public String updateUserRoles(@RequestParam Map<String,String> req){
         tbUserRoleService.updateUserRoles(req);
         Map<String, Object> dataMap = new HashMap<>();
-        return new ObjectMapper().writeValueAsString(new ResponseResult(20000,"成功",dataMap,true));
-    }
-
-    public static void main(String[] args) {
-        String[] r = {"aa","bb","cc"};
-        List<String> list = Arrays.asList(r);
-        String[] b = {"aa","dd"};
-        System.out.println((list.contains(b[0])));
+        return JSONObject.toJSONString(new ResponseResult(20000,"成功",dataMap,true));
     }
 
 }

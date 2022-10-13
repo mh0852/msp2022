@@ -1,5 +1,6 @@
 package com.mh.web.security.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mh.web.security.model.TbAuth;
@@ -27,7 +28,7 @@ public class AclPermissionController {
     private ITbAuthService tbAuthService;
 
     @GetMapping("/admin/acl/permission/toAssign/{roleId}")
-    public String getAuthTree(@PathVariable("roleId") String roleId) throws JsonProcessingException {
+    public String getAuthTree(@PathVariable("roleId") String roleId){
 
         List<TbAuth> allAuths = tbAuthService.findAll();
 
@@ -61,22 +62,18 @@ public class AclPermissionController {
         //创建权限树
         MenuTree menuTree =new MenuTree(authTreeItems);
         authTreeItems=menuTree.builTree();
-//        //转为json看看效果
-//        String jsonOutput= JSON.toJSONString(authTreeItems);
-//        System.out.println(jsonOutput);
-
 
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put("children",authTreeItems);
-        return new ObjectMapper().writeValueAsString(new ResponseResult(20000,"成功",dataMap,true));
+        return JSONObject.toJSONString(new ResponseResult(20000,"成功",dataMap,true));
 
     }
 
     @PostMapping("/admin/acl/permission/doAssign")
-    private String savePermission(@RequestParam Map<String,String> req) throws JsonProcessingException {
+    private String savePermission(@RequestParam Map<String,String> req){
         tbRoleAuthService.updateRoleAuths(req);
         Map<String, Object> dataMap = new HashMap<>();
-        return new ObjectMapper().writeValueAsString(new ResponseResult(20000,"成功",dataMap,true));
+        return JSONObject.toJSONString(new ResponseResult(20000,"成功",dataMap,true));
     }
 
 }

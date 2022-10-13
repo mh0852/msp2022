@@ -1,7 +1,6 @@
 package com.mh.web.security.config;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.mh.web.security.model.AuthInfo;
 import com.mh.web.security.model.TbAuth;
 import com.mh.web.security.model.TbUser;
 import com.mh.web.security.service.ITbAuthService;
@@ -37,16 +36,18 @@ public class CustomUserDetailsService implements UserDetailsService {
             List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
             for (TbAuth auth : auths) {
                 if (auth != null && auth.getCode()!=null) {
-
-                    GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(auth.getCode());
-                    //1：此处将权限信息添加到 GrantedAuthority 对象中，在后面进行全权限验证时会使用GrantedAuthority 对象。
-                    grantedAuthorities.add(grantedAuthority);
+                    // 此处将权限信息添加到 GrantedAuthority 对象中，在后面进行全权限验证时会使用GrantedAuthority 对象。
+                    grantedAuthorities.add(new SimpleGrantedAuthority(auth.getCode()));
+                    // 如果toCode不为空，则添加至权限列表（也是前端路由Routes）
+                    if(auth.getToCode()!=null){
+                        grantedAuthorities.add(new SimpleGrantedAuthority(auth.getToCode()));
+                    }
                 }
             }
-            System.out.println(user.getUsername() + " " + user.getPassword()+ " " + grantedAuthorities);
+//            System.out.println(user.getUsername() + " " + user.getPassword()+ " " + grantedAuthorities);
             return new User(user.getUsername(), user.getPassword(), grantedAuthorities);
         } else {
-            throw new UsernameNotFoundException("用户: " + username + " do not exist!");
+                throw new UsernameNotFoundException("用户: " + username + " 不存在");
         }
     }
 }

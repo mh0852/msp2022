@@ -1,6 +1,7 @@
 package com.mh.web.security.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,7 +38,7 @@ public class AclRoleController {
     @GetMapping("/admin/acl/role/{pageNum}/{pageSize}")
     public String getRoles(@RequestParam(value = "roleName",required = false) String roleName,
                            @PathVariable("pageNum") Integer pageNum,
-                           @PathVariable("pageSize") Integer pageSize) throws JsonProcessingException {
+                           @PathVariable("pageSize") Integer pageSize){
         PageHelper.startPage(pageNum,pageSize);
         QueryWrapper<TbRole> queryWrapper = new QueryWrapper<>();
         if(roleName.trim()!="") {
@@ -63,12 +64,12 @@ public class AclRoleController {
         dataMap.put("total",pageInfo.getTotal());
         dataMap.put("items",roleItems);
 
-        return new ObjectMapper().writeValueAsString(new ResponseResult(20000,"成功",dataMap,true));
+        return JSONObject.toJSONString(new ResponseResult(20000,"成功",dataMap,true));
     }
 
     // 添加角色
     @PostMapping("/admin/acl/role/save")
-    public String addRole(@RequestBody Map<String,String> req) throws JsonProcessingException {
+    public String addRole(@RequestBody Map<String,String> req){
         String roleName = req.get("roleName");
 
         TbRole role = new TbRole();
@@ -79,13 +80,13 @@ public class AclRoleController {
         tbRoleService.getBaseMapper().insert(role);
         FilterSecurityInterceptor f;
         Map<String, Object> dataMap = new HashMap<>();
-        return new ObjectMapper().writeValueAsString(new ResponseResult(20000,"成功",dataMap,true));
+        return JSONObject.toJSONString(new ResponseResult(20000,"成功",dataMap,true));
     }
 
 
     // 修改角色信息
     @PutMapping("/admin/acl/role/update")
-    private String updateRole(@RequestBody Map<String,String> req) throws JsonProcessingException {
+    private String updateRole(@RequestBody Map<String,String> req){
 
         TbRole role = new TbRole();
         role.setId(Long.valueOf(req.get("id")));
@@ -94,24 +95,24 @@ public class AclRoleController {
         tbRoleService.getBaseMapper().updateById(role);
 
         Map<String, Object> dataMap = new HashMap<>();
-        return new ObjectMapper().writeValueAsString(new ResponseResult(20000,"成功",dataMap,true));
+        return JSONObject.toJSONString(new ResponseResult(20000,"成功",dataMap,true));
     }
 
 
     // 批量删除角色
     @DeleteMapping("/admin/acl/role/batchRemove")
-    private String delBatchRoles(@RequestBody List<String> body) throws JsonProcessingException {
+    private String delBatchRoles(@RequestBody List<String> body){
         tbRoleService.delBatchRoles(body);
         Map<String, Object> dataMap = new HashMap<>();
-        return new ObjectMapper().writeValueAsString(new ResponseResult(20000,"成功",dataMap,true));
+        return JSONObject.toJSONString(new ResponseResult(20000,"成功",dataMap,true));
     }
 
     // 删除单个角色
     @DeleteMapping("/admin/acl/role/remove/{id}")
-    private String delUser(@PathVariable("id") String id) throws JsonProcessingException {
+    private String delUser(@PathVariable("id") String id){
         tbRoleService.delBatchRoles(Collections.singletonList(id));
         Map<String, Object> dataMap = new HashMap<>();
-        return new ObjectMapper().writeValueAsString(new ResponseResult(20000,"成功",dataMap,true));
+        return JSONObject.toJSONString(new ResponseResult(20000,"成功",dataMap,true));
     }
 
 

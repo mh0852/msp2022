@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -72,7 +74,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         /**
          * 基于数据库自定义
          */
-        auth.userDetailsService(customUserDetailsService);
+        auth.authenticationProvider(daoAuthenticationProvider());
+       // daoAuthenticationProvider 中已指定customUserDetailsService
+//        auth.userDetailsService(customUserDetailsService);
     }
     /**
      * 指定加密方式
@@ -82,17 +86,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // 使用BCrypt加密密码
         return new BCryptPasswordEncoder();
     }
-
-    public static void main(String[] args) {
-        String s = new BCryptPasswordEncoder().encode("123456");
-        System.out.println(s);
-        System.out.println(new Date(System.currentTimeMillis()) );
-        System.out.println(new Date(System.currentTimeMillis()+60*60*1000*24));
-
-
-
-    }
-
 
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -114,15 +107,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .usernameParameter("username") //默认就是username,可通过配置改
 //                .passwordParameter("password") //默认password
 //                .defaultSuccessUrl("/index") //跳转登录前想到的路径，可配置和successForwardUrl一样只跳指定路径
-                .successForwardUrl("/index") //跳转到index
-                .failureForwardUrl("/f2") //错误跳转
-                .failureUrl("/f1")
+//                .successForwardUrl("/index") //跳转到index
+//                .failureForwardUrl("/f2") //错误跳转
+//                .failureUrl("/f1")
                 .permitAll()
                 .and()
                 .logout()//默认就是/logout
-                .logoutUrl("/logout")
+//                .logoutUrl("/logout")
 //                .logoutRequestMatcher(new AntPathRequestMatcher("/logout","POST")) //自定义注销请求
-                .logoutSuccessUrl("/index")
+//                .logoutSuccessUrl("/index")
                 .deleteCookies() //清理cookie
 //                .clearAuthentication(true) //清除认证信息和使 HttpSession 失效,不配默认就是ture
 //                .invalidateHttpSession(true)
@@ -134,8 +127,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .maxSessionsPreventsLogin(true)  //登录之后其他新的登录禁止，不配则是踢掉原来的登录
 //                .sessionRegistry(sessionRegistry())
         ;
-        //把自定义认证过滤器加到拦截器链中
-//        http.addFilterAt(loginFilter(), UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(myFilterSecurityInterceptor, FilterSecurityInterceptor.class); // 自定义过滤器实现读权限表判断访问权限  (暂时先不用这个判断权限)
         http.addFilterBefore(new JwtLoginFilter("/admin/acl/index/login",authenticationManager()),UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(new JwtFilter(),UsernamePasswordAuthenticationFilter.class);
@@ -149,7 +140,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //    SpringSessionBackedSessionRegistry sessionRegistry() {
 //        return new SpringSessionBackedSessionRegistry(sessionRepository);
 //    }
-
+@Bean
+public AuthenticationProvider daoAuthenticationProvider() {
+    DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+    daoAuthenticationProvider.setUserDetailsService(customUserDetailsService);
+    daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+    daoAuthenticationProvider.setHideUserNotFoundExceptions(false); // 配置false 补货用户不存在异常，否则抛bad credentials
+    return daoAuthenticationProvider;
+}
 //    @Bean
 //    RoleHierarchy roleHierarchy() {
 //        RoleHierarchyImpl hierarchy = new RoleHierarchyImpl();

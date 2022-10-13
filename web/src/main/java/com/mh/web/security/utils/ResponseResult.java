@@ -6,13 +6,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResponseResult<T> {
     private Integer code;
-    private String msg;
+    private String message;
     private T data;
     private Boolean success;
 
-    public ResponseResult(Integer code, String msg) {
+    public ResponseResult(Integer code, String message) {
         this.code = code;
-        this.msg = msg;
+        this.message = message;
     }
     public ResponseResult(Integer code, T data) {
         this.code = code;
@@ -27,8 +27,8 @@ public class ResponseResult<T> {
         this.code = code;
     }
 
-    public String getMsg() {
-        return msg;
+    public String getMessage() {
+        return message;
     }
 
     public Boolean getSuccess() {
@@ -39,8 +39,8 @@ public class ResponseResult<T> {
         this.success = success;
     }
 
-    public void setMsg(String msg) {
-        this.msg = msg;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public T getData() {
@@ -51,15 +51,15 @@ public class ResponseResult<T> {
         this.data = data;
     }
 
-    public ResponseResult(Integer code, String msg, T data) {
+    public ResponseResult(Integer code, String message, T data) {
         this.code = code;
-        this.msg = msg;
+        this.message = message;
         this.data = data;
     }
 
-    public ResponseResult(Integer code, String msg, T data,Boolean success) {
+    public ResponseResult(Integer code, String message, T data,Boolean success) {
         this.code = code;
-        this.msg = msg;
+        this.message = message;
         this.data = data;
         this.success = success;
     }
