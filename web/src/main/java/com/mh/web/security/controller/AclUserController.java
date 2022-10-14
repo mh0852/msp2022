@@ -45,6 +45,8 @@ public class AclUserController {
     public String getUserInfo(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
+        String nickName = tbUserService.findUserByUserName(username).getNickName();
+
 
         Collection<? extends GrantedAuthority> routes = authentication.getAuthorities();
 
@@ -77,6 +79,7 @@ public class AclUserController {
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put("routes",rts);
         dataMap.put("name",username);
+        dataMap.put("nickName",nickName);
         dataMap.put("avatar","https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif");
         dataMap.put("buttons",buttons);
         dataMap.put("roles",ros);
@@ -168,7 +171,7 @@ public class AclUserController {
         user.setUsername(userItem.getUsername());
         user.setPassword(userItem.getPassword());
         user.setGmtModified(TimeGet.getCurrentTime());
-        user.setNickName(TimeGet.getCurrentTime());
+        user.setNickName(userItem.getNickName());
 
         tbUserService.getBaseMapper().updateById(user);
 

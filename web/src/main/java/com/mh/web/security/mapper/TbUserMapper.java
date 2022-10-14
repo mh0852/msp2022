@@ -12,5 +12,5 @@ import com.mh.web.security.model.TbUser;
  * @since 2022-08-31
  */
 public interface TbUserMapper extends BaseMapper<TbUser> {
-
+    TbUser findUserByUserName(String username);
 }

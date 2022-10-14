@@ -52,4 +52,9 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
             tbUserRoleMapper.delete(new QueryWrapper<TbUserRole>().setEntity(tbUserRole));
         }
     }
+
+    @Override
+    public TbUser findUserByUserName(String username) {
+        return tbUserMapper.findUserByUserName(username);
+    }
 }

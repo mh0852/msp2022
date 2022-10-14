@@ -87,7 +87,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.exceptionHandling().accessDeniedPage("/error.html");//配置没有权限访问跳转的自定义页面
+//        http.exceptionHandling().accessDeniedPage("/error.html");//配置没有权限访问跳转的自定义页面
         http.authorizeRequests()
 //                .antMatchers("/admin/**").hasRole("admin")
 //                .antMatchers("/user/**").hasRole("user")
@@ -112,6 +112,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .deleteCookies() //清理cookie
 //                .clearAuthentication(true) //清除认证信息和使 HttpSession 失效,不配默认就是ture
 //                .invalidateHttpSession(true)
+                .and()
+                .exceptionHandling()//添加异常处理过滤器
+                .accessDeniedHandler(new RestfulAccessDeniedHandler())//访问拒绝处理器
                 .and()
                 .csrf().disable()
                 .sessionManagement()

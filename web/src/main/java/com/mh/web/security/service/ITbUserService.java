@@ -17,4 +17,6 @@ public interface ITbUserService extends IService<TbUser> {
 
     void deleteUsersWithAuths(List<TbUser> tbuser);
 
+    TbUser findUserByUserName(String username);
+
 }
